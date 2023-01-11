@@ -1,4 +1,4 @@
-# LokoBank_contest
+# Lockobank_contest
 
 <!-- #region -->
 <p align="center">
