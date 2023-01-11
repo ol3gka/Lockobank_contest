@@ -1,0 +1,100 @@
+--Скрипт написан и валидирован на персональном ПК с ииспользованием SQLite (SQLiteStudio 3.3.2). Изначальный эксель потребовал предобработки в виде приведения дат в формат YY-MM-DD, т.к. SQLiteStudio не читает данный формат
+--view_1 на кол-во выданных договоров и сумму выданных кредитов за соответствующий месяц (поколение)
+create view view_1 as
+with p1 as (SELECT "Дата отчета", "Количество", "Сумма выдач"
+from
+(
+SELECT "Дата отчета", count(DISTINCT "id договора") as "Количество", sum("Сумма выдач") as "Сумма выдач"
+FROM excel_sheet
+WHERE excel_sheet."Дата отчета" = excel_sheet."Дата заключения договора"
+GROUP BY "Дата отчета"
+ORDER BY "Дата отчета"
+) 
+),
+p2 as (SELECT DISTINCT "Дата отчета" from excel_sheet ORDER BY "Дата отчета")
+SELECT p2."Дата отчета",ifnull("Количество",0) as "Количество",ifnull("Сумма выдач",0) as "Сумма выдач" from p2 left outer join p1 on p2."Дата отчета"=p1."Дата отчета";
+--view_2 для опредлеления кол-ва месяцев, прошедших с момента заключения договора (MOB – Month on Book))
+create view view_2 as
+SELECT "Дата отчета", "Задолженность 90+", round(CAST(
+            ((JULIANDAY("Дата отчета") - JULIANDAY("Дата заключения договора"))/(365/12)
+            ) AS FLOAT ),0) AS DIFFERENCE, "id договора", "Дата заключения договора"
+from excel_sheet
+ORDER BY "Дата отчета", DIFFERENCE;
+--view_3 на формирование винтажа задолженности 90+
+create view view_3 as
+with r_ as (select DISTINCT "Дата заключения договора" from excel_sheet ORDER BY "Дата заключения договора"),
+     r0 as (select "Дата заключения договора",sum("Задолженность 90+") as "0" from view_2 where DIFFERENCE=0 GROUP BY "Дата заключения договора"),
+     r__0 as (select * from r_ left outer join r0 on r_."Дата заключения договора"=r0."Дата заключения договора"),
+     r1 as (select "Дата заключения договора",sum("Задолженность 90+") as "1" from view_2 where DIFFERENCE=1 GROUP BY "Дата заключения договора"),
+     r0_1 as (select * from r__0 left outer join r1 on r__0."Дата заключения договора"=r1."Дата заключения договора"),
+     r2 as (select "Дата заключения договора",sum("Задолженность 90+") as "2" from view_2 where DIFFERENCE=2 GROUP BY "Дата заключения договора"),
+     r0_2 as (select * from r0_1 left outer join r2 on r0_1."Дата заключения договора"=r2."Дата заключения договора"),
+     r3 as (select "Дата заключения договора",sum("Задолженность 90+") as "3" from view_2 where DIFFERENCE=3 GROUP BY "Дата заключения договора"),
+     r0_3 as (select * from r0_2 left outer join r3 on r0_2."Дата заключения договора"=r3."Дата заключения договора"),
+     r4 as (select "Дата заключения договора",sum("Задолженность 90+") as "4" from view_2 where DIFFERENCE=4 GROUP BY "Дата заключения договора"),
+     r0_4 as (select * from r0_3 left outer join r4 on r0_3."Дата заключения договора"=r4."Дата заключения договора"),
+     r5 as (select "Дата заключения договора",sum("Задолженность 90+") as "5" from view_2 where DIFFERENCE=5 GROUP BY "Дата заключения договора"),
+     r0_5 as (select * from r0_4 left outer join r5 on r0_4."Дата заключения договора"=r5."Дата заключения договора"),
+     
+     r6 as (select "Дата заключения договора",sum("Задолженность 90+") as "6" from view_2 where DIFFERENCE=6 GROUP BY "Дата заключения договора"),
+     r0_6 as (select * from r0_5 left outer join r6 on r0_5."Дата заключения договора"=r6."Дата заключения договора"),
+     r7 as (select "Дата заключения договора",sum("Задолженность 90+") as "7" from view_2 where DIFFERENCE=7 GROUP BY "Дата заключения договора"),
+     r0_7 as (select * from r0_6 left outer join r7 on r0_6."Дата заключения договора"=r7."Дата заключения договора"),
+     r8 as (select "Дата заключения договора",sum("Задолженность 90+") as "8" from view_2 where DIFFERENCE=8 GROUP BY "Дата заключения договора"),
+     r0_8 as (select * from r0_7 left outer join r8 on r0_7."Дата заключения договора"=r8."Дата заключения договора"),
+     r9 as (select "Дата заключения договора",sum("Задолженность 90+") as "9" from view_2 where DIFFERENCE=9 GROUP BY "Дата заключения договора"),
+     r0_9 as (select * from r0_8 left outer join r9 on r0_8."Дата заключения договора"=r9."Дата заключения договора"),
+     r10 as (select "Дата заключения договора",sum("Задолженность 90+") as "10" from view_2 where DIFFERENCE=10 GROUP BY "Дата заключения договора"),
+     r0_10 as (select * from r0_9 left outer join r10 on r0_9."Дата заключения договора"=r10."Дата заключения договора"),
+     
+     r11 as (select "Дата заключения договора",sum("Задолженность 90+") as "11" from view_2 where DIFFERENCE=11 GROUP BY "Дата заключения договора"),
+     r0_11 as (select * from r0_10 left outer join r11 on r0_10."Дата заключения договора"=r11."Дата заключения договора"),
+     r12 as (select "Дата заключения договора",sum("Задолженность 90+") as "12" from view_2 where DIFFERENCE=12 GROUP BY "Дата заключения договора"),
+     r0_12 as (select * from r0_11 left outer join r12 on r0_11."Дата заключения договора"=r12."Дата заключения договора"),
+     r13 as (select "Дата заключения договора",sum("Задолженность 90+") as "13" from view_2 where DIFFERENCE=13 GROUP BY "Дата заключения договора"),
+     r0_13 as (select * from r0_12 left outer join r13 on r0_12."Дата заключения договора"=r13."Дата заключения договора"),
+     r14 as (select "Дата заключения договора",sum("Задолженность 90+") as "14" from view_2 where DIFFERENCE=14 GROUP BY "Дата заключения договора"),
+     r0_14 as (select * from r0_13 left outer join r14 on r0_13."Дата заключения договора"=r14."Дата заключения договора"),
+     r15 as (select "Дата заключения договора",sum("Задолженность 90+") as "15" from view_2 where DIFFERENCE=15 GROUP BY "Дата заключения договора"),
+     r0_15 as (select * from r0_14 left outer join r15 on r0_14."Дата заключения договора"=r15."Дата заключения договора"),
+
+     r16 as (select "Дата заключения договора",sum("Задолженность 90+") as "16" from view_2 where DIFFERENCE=16 GROUP BY "Дата заключения договора"),
+     r0_16 as (select * from r0_15 left outer join r16 on r0_15."Дата заключения договора"=r16."Дата заключения договора"),
+     r17 as (select "Дата заключения договора",sum("Задолженность 90+") as "17" from view_2 where DIFFERENCE=17 GROUP BY "Дата заключения договора"),
+     r0_17 as (select * from r0_16 left outer join r17 on r0_16."Дата заключения договора"=r17."Дата заключения договора"),
+     r18 as (select "Дата заключения договора",sum("Задолженность 90+") as "18" from view_2 where DIFFERENCE=18 GROUP BY "Дата заключения договора"),
+     r0_18 as (select * from r0_17 left outer join r18 on r0_17."Дата заключения договора"=r18."Дата заключения договора"),
+     r19 as (select "Дата заключения договора",sum("Задолженность 90+") as "19" from view_2 where DIFFERENCE=19 GROUP BY "Дата заключения договора"),
+     r0_19 as (select * from r0_18 left outer join r19 on r0_18."Дата заключения договора"=r19."Дата заключения договора"),
+     r20 as (select "Дата заключения договора",sum("Задолженность 90+") as "20" from view_2 where DIFFERENCE=20 GROUP BY "Дата заключения договора"),
+     r0_20 as (select * from r0_19 left outer join r20 on r0_19."Дата заключения договора"=r20."Дата заключения договора")
+
+/*     r21 as (select "Дата заключения договора",sum("Задолженность 90+") as "21" from view_2 where DIFFERENCE=21 GROUP BY "Дата заключения договора"),
+     r0_21 as (select * from r0_20 left outer join r21 on r0_20."Дата заключения договора"=r21."Дата заключения договора"),
+     r22 as (select "Дата заключения договора",sum("Задолженность 90+") as "22" from view_2 where DIFFERENCE=22 GROUP BY "Дата заключения договора"),
+     r0_22 as (select * from r0_21 left outer join r22 on r0_21."Дата заключения договора"=r22."Дата заключения договора"),
+     r23 as (select "Дата заключения договора",sum("Задолженность 90+") as "23" from view_2 where DIFFERENCE=23 GROUP BY "Дата заключения договора"),
+     r0_23 as (select * from r0_22 left outer join r23 on r0_22."Дата заключения договора"=r23."Дата заключения договора"),
+     r24 as (select "Дата заключения договора",sum("Задолженность 90+") as "24" from view_2 where DIFFERENCE=24 GROUP BY "Дата заключения договора"),
+     r0_24 as (select * from r0_23 left outer join r24 on r0_23."Дата заключения договора"=r24."Дата заключения договора"),
+     r25 as (select "Дата заключения договора",sum("Задолженность 90+") as "25" from view_2 where DIFFERENCE=25 GROUP BY "Дата заключения договора"),
+     r0_25 as (select * from r0_24 left outer join r25 on r0_24."Дата заключения договора"=r25."Дата заключения договора")*/
+select "Дата заключения договора",ifnull("0",0) as "0",ifnull("1",0) as "1",ifnull("2",0) as "2",ifnull("3",0) as "3",
+ifnull("4",0) as "4",ifnull("5",0) as "5", ifnull("6",0) as "6",ifnull("7",0) as "7",ifnull("8",0) as "8",
+ifnull("9",0) as "9",ifnull("10",0) as "10",ifnull("11",0) as "11",ifnull("12",0) as "12",ifnull("13",0) as "13",
+ifnull("14",0) as "14",ifnull("15",0) as "15",ifnull("16",0) as "16",ifnull("17",0) as "17",
+ifnull("18",0) as "18",ifnull("19",0) as "19",ifnull("20",0) as "20"
+/*ifnull("21",0) as "21",ifnull("22",0) as "22"*/
+from r0_20;
+--Объединяем view_1, view_3 в общую таблицу (view_4)
+create view view_4 as
+select view_1."Дата отчета" as "Поколение","Сумма выдач","Количество","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"
+from view_1 join view_3 on view_1."Дата отчета"=view_3."Дата заключения договора";
+--Выводим результаты и сохраняем 
+select * from view_4;
+--Можно удалить созданные view
+/*drop view IF EXISTS view_1;
+drop view IF EXISTS view_2;
+drop view IF EXISTS view_3;
+drop view IF EXISTS view_4;*/
+--
