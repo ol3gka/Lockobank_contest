@@ -25,3 +25,13 @@ SQL_skript.txt, Task 1 results.xlsx
 ```
 Task 2 results.xlsx
 ```
+
+# Additional_task_16_01_2023
+В дополнении к контесту добавлено решение задания "Задача 4" из:
+```
+Additional_task_16_01_2023/Задача DataScience Центр моделирования.docx
+```
+Ноутбук с решением и данные соответственно:
+```
+Additional_task_16_01_2023/Task4_solution.ipynb, Additional_task_16_01_2023/Task4.csv
+```
